@@ -2,9 +2,9 @@
 <html lang="fr" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>SLVH — Seulement Les Vrais Humains | Studio 3D & Ésotérisme</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -32,6 +32,8 @@
         }
     </script>
     <style>
+        :root { color-scheme: dark; box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+        html { scroll-padding-top: env(safe-area-inset-top, 0px); }
         body { background-color: #08080a; color: #f3e5ab; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
         .font-cinzel { font-family: 'Cinzel', serif; }
         .font-mono { font-family: 'JetBrains Mono', monospace; }
@@ -42,16 +44,36 @@
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #08080a; }
         ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 4px; }
+.lab{display:block;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:#d4af37;margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.05em}
+.sel{width:100%;background:#08080a;border:1px solid rgba(212,175,55,.3);border-radius:.25rem;padding:.75rem;color:#f3e5ab;font-family:'JetBrains Mono',monospace;font-size:.875rem;outline:none}
+.sw{width:34px;height:34px;border-radius:9999px;border:2px solid rgba(255,255,255,.25)}
+.sw.on{border-color:#d4af37;box-shadow:0 0 0 2px #d4af37}
+html{scroll-behavior:smooth}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hero-line{opacity:0;transform:translateY(24px);filter:blur(8px);animation:heroIn 1.6s cubic-bezier(.2,.7,.2,1) forwards;animation-delay:var(--d,0s)}
+@keyframes heroIn{to{opacity:1;transform:none;filter:none}}
+.fog{position:absolute;inset:-20%;pointer-events:none;background:radial-gradient(ellipse at 30% 60%,rgba(126,34,206,.2),transparent 55%);animation:drift 24s ease-in-out infinite alternate}
+.fog2{background:radial-gradient(ellipse at 70% 40%,rgba(212,175,55,.15),transparent 55%);animation-duration:32s;animation-direction:alternate-reverse}
+@keyframes drift{to{transform:translate3d(8%,-6%,0) scale(1.15)}}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity 1.2s ease,transform 1.2s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:59;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.6))}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.07;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+#progress{position:fixed;top:0;left:0;height:2px;width:0;background:#d4af37;z-index:70;box-shadow:0 0 10px #d4af37}
+@media (prefers-reduced-motion:reduce){.hero-line,.reveal{animation:none;transition:none;opacity:1;transform:none;filter:none}.fog{animation:none}}
     </style>
+
+
 </head>
 <body class="selection:bg-gold selection:text-black">
+    <div id="progress"></div>
     <!-- Navigation -->
-    <nav class="fixed top-0 left-0 w-full z-50 glass-panel border-b border-gold/20 px-6 py-4 flex justify-between items-center">
+    <nav class="fixed left-0 w-full z-50 glass-panel border-b border-gold/20 px-6 py-4 flex justify-between items-center" style="top: env(safe-area-inset-top, 0px);">
         <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-full border border-gold flex items-center justify-center font-cinzel font-bold text-gold gold-glow">SLVH</div>
+            <div class="w-10 h-10 rounded-full border border-gold flex items-center justify-center font-cinzel font-bold text-gold gold-glow text-[10px]">SLVH</div>
             <div>
                 <h1 class="font-cinzel font-bold tracking-wider text-gold text-lg">SLVH</h1>
-                <p class="text-xs text-goldLight/60 font-mono tracking-widest">SEULEMENT LES VRAIS HUMAINS</p>
+                <p class="text-xs text-goldLight/60 font-mono tracking-widest hidden sm:block">SEULEMENT LES VRAIS HUMAINS</p>
             </div>
         </div>
         <div class="hidden md:flex space-x-8 text-sm font-mono tracking-widest">
@@ -60,47 +82,53 @@
             <a href="#codex" class="hover:text-gold transition">CODEX</a>
             <a href="#passport" class="hover:text-gold transition">PASSEPORT</a>
         </div>
-        <a href="#passport" class="bg-gold/10 border border-gold text-gold hover:bg-gold hover:text-black transition px-4 py-2 rounded font-mono text-xs tracking-wider">REJOINDRE LE MOUVEMENT</a>
+        <a href="#passport" class="bg-gold/10 border border-gold text-gold hover:bg-gold hover:text-black transition px-4 py-2 rounded font-mono text-xs tracking-wider">REJOINDRE</a>
     </nav>
 
     <!-- Hero Section -->
     <header class="relative min-h-screen flex items-center justify-center px-6 pt-24 pb-16 overflow-hidden">
-        <div class="absolute inset-0 z-0 opacity-20 flex items-center justify-center pointer-events-none">
-            <div class="w-[600px] h-[600px] border border-gold rounded-full animate-pulse flex items-center justify-center">
+        <div class="fog"></div><div class="fog fog2"></div>
+        <div id="hero-rings" class="absolute inset-0 z-0 opacity-20 flex items-center justify-center pointer-events-none">
+            <div class="w-[600px] h-[600px] border border-gold rounded-full flex items-center justify-center" style="animation:spin 90s linear infinite">
                 <div class="w-[450px] h-[450px] border border-ethereal rounded-full rotate-45"></div>
             </div>
         </div>
-        <div class="relative z-10 max-w-4xl text-center space-y-6">
-            <div class="inline-block px-4 py-1 rounded-full border border-blood text-blood font-mono text-xs uppercase tracking-widest blood-glow">Mouvement de Rébellion Spirituelle & Urbaine</div>
-            <h2 class="font-cinzel text-5xl md:text-7xl font-black text-white tracking-widest gold-glow">
-                SEULEMENT LES <span class="text-gold">VRAIS HUMAINS</span>
-            </h2>
-            <p class="text-lg md:text-xl text-goldLight/80 max-w-2xl mx-auto font-sans leading-relaxed">
-                Rap brut, conscience ésotérique, décryptage de l'histoire humaine, des énergies et de la Matrice. Bienvenue dans l'Ordre SLVH.
-            </p>
-            <div class="flex flex-wrap justify-center gap-4 pt-4">
-                <a href="#avatar-creator" class="bg-gold text-black font-bold font-mono px-8 py-4 rounded hover:bg-goldLight transition shadow-lg tracking-wider">PERSONNALISER MON AVATAR</a>
+        <div class="relative z-10 max-w-4xl text-center space-y-8">
+            <p class="hero-line font-mono text-xs tracking-[0.4em] text-blood uppercase blood-glow" style="--d:.3s">Ordre SLVH • Mouvement de conscience</p>
+            <h2 class="hero-line font-cinzel text-5xl md:text-8xl font-black text-white tracking-widest gold-glow" style="--d:.9s">SEULEMENT LES <span class="text-gold">VRAIS HUMAINS</span></h2>
+            <div class="hero-line mx-auto w-24 h-px bg-gold" style="--d:1.5s"></div>
+            <p class="hero-line text-lg md:text-2xl text-goldLight/80 max-w-2xl mx-auto leading-relaxed" style="--d:2s">Rap brut. Histoire cachée. Fréquences. L’éveil commence là où le bruit s’arrête.</p>
+            <div class="hero-line flex flex-wrap justify-center gap-4 pt-4" style="--d:2.6s">
+                <a href="#avatar-creator" class="bg-gold text-black font-bold font-mono px-8 py-4 rounded hover:bg-goldLight transition shadow-lg tracking-wider">CRÉER MON PERSONNAGE</a>
                 <a href="#audio" class="glass-panel text-gold font-mono px-8 py-4 rounded hover:bg-gold/10 transition tracking-wider">ÉCOUTER LES ARCHIVES</a>
             </div>
         </div>
+        <a href="#manifeste" class="hero-line absolute bottom-8 left-1/2 -translate-x-1/2 font-mono text-xs tracking-[0.3em] text-gold/70" style="--d:3.2s">DESCENDRE ↓</a>
     </header>
 
-    <!-- Atelier de Création de Personnage 3D Réaliste -->
+    <section id="manifeste" class="py-32 px-6 max-w-4xl mx-auto text-center space-y-24">
+        <p class="reveal font-cinzel text-2xl md:text-4xl leading-relaxed text-white">On t’a donné un nom, une case, un numéro.</p>
+        <p class="reveal font-cinzel text-2xl md:text-4xl leading-relaxed text-goldLight/90">On t’a appris à regarder l’écran plutôt que le ciel.</p>
+        <p class="reveal font-cinzel text-3xl md:text-5xl leading-relaxed text-gold gold-glow">SLVH te rend ce qu’on t’a pris : ta conscience.</p>
+        <div class="reveal mx-auto w-px h-24 bg-gradient-to-b from-gold to-transparent"></div>
+    </section>
+
+    
+<!-- Atelier de Création de Personnage 3D -->
     <section id="avatar-creator" class="py-24 px-6 max-w-7xl mx-auto">
         <div class="text-center mb-12 space-y-3">
-            <div class="inline-block px-3 py-1 border border-gold/40 rounded font-mono text-xs text-gold">MODÈLE HUMANOÏDE HAUTE DÉFINITION</div>
-            <h3 class="font-cinzel text-3xl md:text-4xl font-bold text-gold gold-glow">STUDIO DE CRÉATION D'AVATAR 3D</h3>
-            <p class="text-goldLight/70 font-mono text-sm">Configure l'apparence, l'aura énergétique et la posture de ton initié SLVH</p>
+            <div class="inline-block px-3 py-1 border border-gold/40 rounded font-mono text-xs text-gold">PERSONNAGE 3D : HUMAIN, LOUP-GAROU, VAMPIRE</div>
+            <h3 class="font-cinzel text-3xl md:text-4xl font-bold text-gold gold-glow">STUDIO DE CRÉATION D’AVATAR 3D</h3>
+            <p class="text-goldLight/70 font-mono text-sm">Configure l’apparence, l’aura énergétique et la posture de ton initié SLVH</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <!-- Canvas 3D -->
             <div class="lg:col-span-7 glass-panel rounded-2xl h-[540px] md:h-[640px] relative overflow-hidden flex items-center justify-center border-gold-glow">
                 <div id="loading-overlay" class="absolute inset-0 bg-darkBg/90 z-20 flex flex-col items-center justify-center space-y-3">
                     <div class="w-10 h-10 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
                     <p class="font-mono text-xs text-gold tracking-widest">INCARNATION DU MODÈLE 3D EN COURS...</p>
                 </div>
-                <div id="canvas-container" class="w-full h-full cursor-grab active:grabbing"></div>
+                <div id="canvas-container" class="w-full h-full cursor-grab active:grabbing" style="touch-action: pan-y;"></div>
                 <div class="absolute top-4 left-4 flex gap-2 z-10">
                     <button id="toggle-spin-btn" class="bg-black/80 hover:bg-gold hover:text-black transition px-3 py-1.5 rounded border border-gold/40 text-xs font-mono text-gold">ROTATION : ON</button>
                 </div>
@@ -109,52 +137,16 @@
                 </div>
             </div>
 
-            <!-- Menu RPG de Personnalisation -->
-            <div class="lg:col-span-5 glass-panel p-6 md:p-8 rounded-2xl space-y-5">
-                <div>
-                    <label class="block font-mono text-xs text-gold mb-1.5 uppercase tracking-wider">1. Posture & Attitude</label>
-                    <select id="anim-select" class="w-full bg-darkBg border border-gold/30 rounded p-3 text-goldLight font-mono text-sm focus:border-gold outline-none">
-                        <option value="Idle">Garde Souveraine (Posture Calme)</option>
-                        <option value="Walk">Marche Déterminée (Street)</option>
-                        <option value="Run">Course / Assaut</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block font-mono text-xs text-gold mb-1.5 uppercase tracking-wider">2. Finition du Skin / Matériau</label>
-                    <select id="skin-select" class="w-full bg-darkBg border border-gold/30 rounded p-3 text-goldLight font-mono text-sm focus:border-gold outline-none">
-                        <option value="original">Réaliste (Texture Originale)</option>
-                        <option value="obsidienne">Armure Obsidienne & Or</option>
-                        <option value="divin">Statuaire Or Alchimique</option>
-                        <option value="astral">Corps Astral (Énergie Violette)</option>
-                        <option value="chrome">Chrome Cybernétique</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block font-mono text-xs text-gold mb-1.5 uppercase tracking-wider">3. Éclairage & Ambiance</label>
-                    <select id="light-select" class="w-full bg-darkBg border border-gold/30 rounded p-3 text-goldLight font-mono text-sm focus:border-gold outline-none">
-                        <option value="solaire">Aube Dorée (Solaire & Chaud)</option>
-                        <option value="street">Nuit Urbaine (Néon Rouge & Bleu)</option>
-                        <option value="esoterique">Temple Éthéré (Violet & Or)</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block font-mono text-xs text-gold mb-1.5 uppercase tracking-wider">4. Artefacts & Champ Énergétique</label>
-                    <select id="aura-select" class="w-full bg-darkBg border border-gold/30 rounded p-3 text-goldLight font-mono text-sm focus:border-gold outline-none">
-                        <option value="metatron">Anneaux de Métatron en Orbite</option>
-                        <option value="torus">Champ Toroïdal 432Hz</option>
-                        <option value="aucun">Épuré (Sans Artefacts)</option>
-                    </select>
-                </div>
-
-                <div class="pt-2">
-                    <button id="save-avatar-btn" class="w-full bg-gold text-black font-bold font-mono py-3.5 rounded hover:bg-goldLight transition tracking-wider shadow-lg">
-                        VALIDER POUR MON PASSEPORT SLVH
-                    </button>
-                </div>
-            </div>
+            <div class="lg:col-span-5 glass-panel p-6 md:p-8 rounded-2xl space-y-4">
+  <div><label class="lab">1. Espèce</label><select id="species-select" class="sel"><option value="human">Humain</option><option value="wolf">Loup-garou</option><option value="vampire">Vampire</option></select></div>
+  <div><label class="lab">2. Teinte de peau / pelage</label><div id="skin-swatches" class="flex flex-wrap gap-2"></div></div>
+  <div><label class="lab">3. Cheveux / crinière</label><div id="hair-swatches" class="flex flex-wrap gap-2"></div></div>
+  <div><label class="lab">4. Arme</label><select id="weapon-select" class="sel"><option value="epee">Épée</option><option value="axe">Hache</option><option value="ak">Kalachnikov</option><option value="power">Super pouvoir</option><option value="none">Aucune</option></select></div>
+  <div><label class="lab">5. Posture</label><select id="anim-select" class="sel"><option value="Idle">Garde souveraine</option><option value="Walk">Marche déterminée</option><option value="Run">Course / assaut</option></select></div>
+  <div><label class="lab">6. Éclairage</label><select id="light-select" class="sel"><option value="solaire">Aube dorée</option><option value="street">Nuit urbaine</option><option value="esoterique">Temple éthéré</option></select></div>
+  <div><label class="lab">7. Aura</label><select id="aura-select" class="sel"><option value="metatron">Anneaux de Métatron</option><option value="torus">Champ toroïdal 432Hz</option><option value="aucun">Aucune</option></select></div>
+  <button id="save-avatar-btn" class="w-full bg-gold text-black font-bold font-mono py-3.5 rounded hover:bg-goldLight transition tracking-wider shadow-lg">VALIDER POUR MON PASSEPORT SLVH</button>
+</div>
         </div>
     </section>
 
@@ -164,7 +156,6 @@
             <h3 class="font-cinzel text-3xl md:text-4xl font-bold text-gold gold-glow">ARCHIVES SONORES SLVH</h3>
             <p class="text-goldLight/70 font-mono text-sm">Fréquences 432Hz, 808 sombres et vérités cachées</p>
         </div>
-
         <div class="glass-panel p-6 md:p-8 rounded-2xl space-y-6 border-gold-glow">
             <div class="flex flex-col md:flex-row justify-between items-center border-b border-gold/20 pb-6 gap-4">
                 <div>
@@ -175,9 +166,8 @@
                     LANCER LE BEAT 808
                 </button>
             </div>
-
             <div class="space-y-3">
-                <div class="track-item p-4 rounded bg-darkBg border border-gold/10 hover:border-gold/40 transition cursor-pointer flex justify-between items-center" data-title="SLVH — Seulement Les Vrais Humains (Intro)" data-desc="Fréquence 432Hz • L'appel des réels au milieu des illusions.">
+                <div class="track-item p-4 rounded bg-darkBg border border-gold/10 hover:border-gold/40 transition cursor-pointer flex justify-between items-center" data-title="SLVH — Seulement Les Vrais Humains (Intro)" data-desc="Fréquence 432Hz • L’appel des réels au milieu des illusions.">
                     <div>
                         <h4 class="font-cinzel font-bold text-gold">01. Seulement Les Vrais Humains</h4>
                         <p class="text-xs font-mono text-goldLight/60">Prod sombre / 808 lourdes / Voix modulées</p>
@@ -202,13 +192,12 @@
         </div>
     </section>
 
-    <!-- Codex & Piliers -->
+    <!-- Codex -->
     <section id="codex" class="py-24 px-6 max-w-7xl mx-auto">
         <div class="text-center mb-16 space-y-3">
             <h3 class="font-cinzel text-3xl md:text-4xl font-bold text-gold gold-glow">LE CODEX DE SLVH</h3>
             <p class="text-goldLight/70 font-mono text-sm">Les 4 Piliers de notre mouvement de liberté</p>
         </div>
-
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="glass-panel p-6 rounded-xl space-y-4 border-gold-glow">
                 <div class="text-gold font-cinzel text-xl font-bold">01 / Histoire Cachée</div>
@@ -216,30 +205,29 @@
             </div>
             <div class="glass-panel p-6 rounded-xl space-y-4 border-gold-glow">
                 <div class="text-gold font-cinzel text-xl font-bold">02 / Dieu & Le Divin</div>
-                <p class="text-sm text-goldLight/80 font-sans">Au-delà des dogmes religieux, reconnexion directe avec la source universelle, l'étincelle divine en chaque être humain.</p>
+                <p class="text-sm text-goldLight/80 font-sans">Au-delà des dogmes religieux, reconnexion directe avec la source universelle, l’étincelle divine en chaque être humain.</p>
             </div>
             <div class="glass-panel p-6 rounded-xl space-y-4 border-gold-glow">
                 <div class="text-gold font-cinzel text-xl font-bold">03 / Énergies & Fréquences</div>
-                <p class="text-sm text-goldLight/80 font-sans">Maîtrise des vibrations (432Hz), des champs toroïdaux et de l'alchimie intérieure pour s'affranchir de la Matrice.</p>
+                <p class="text-sm text-goldLight/80 font-sans">Maîtrise des vibrations (432Hz), des champs toroïdaux et de l’alchimie intérieure pour s’affranchir de la Matrice.</p>
             </div>
             <div class="glass-panel p-6 rounded-xl space-y-4 border-gold-glow">
                 <div class="text-gold font-cinzel text-xl font-bold">04 / Thug Life & Occulte</div>
-                <p class="text-sm text-goldLight/80 font-sans">Le code d'honneur de la rue croisé avec la rigueur des sciences occultes. Incorruptibles, fidèles et souverains.</p>
+                <p class="text-sm text-goldLight/80 font-sans">Le code d’honneur de la rue croisé avec la rigueur des sciences occultes. Incorruptibles, fidèles et souverains.</p>
             </div>
         </div>
     </section>
 
-    <!-- Générateur de Passeport -->
+    <!-- Passeport -->
     <section id="passport" class="py-24 px-6 max-w-4xl mx-auto">
         <div class="text-center mb-16 space-y-3">
-            <h3 class="font-cinzel text-3xl md:text-4xl font-bold text-gold gold-glow">PASSEPORT D'INITIÉ SLVH</h3>
-            <p class="text-goldLight/70 font-mono text-sm">Générez votre carte d'appartenance officielle au mouvement</p>
+            <h3 class="font-cinzel text-3xl md:text-4xl font-bold text-gold gold-glow">PASSEPORT D’INITIÉ SLVH</h3>
+            <p class="text-goldLight/70 font-mono text-sm">Générez votre carte d’appartenance officielle au mouvement</p>
         </div>
-
         <div class="glass-panel p-8 md:p-12 rounded-2xl space-y-8 border-gold-glow">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block font-mono text-xs text-gold mb-2 uppercase tracking-wider">Votre Pseudo / Nom d'Initié</label>
+                    <label class="block font-mono text-xs text-gold mb-2 uppercase tracking-wider">Votre Pseudo / Nom d’Initié</label>
                     <input type="text" id="initiable-name" placeholder="Ex: LOUIS SLVH" class="w-full bg-darkBg border border-gold/30 rounded p-3 text-goldLight font-mono text-sm focus:border-gold outline-none">
                 </div>
                 <div>
@@ -247,303 +235,236 @@
                     <input type="text" id="initiable-zone" placeholder="Ex: BRUXELLES / UNDERGROUND" class="w-full bg-darkBg border border-gold/30 rounded p-3 text-goldLight font-mono text-sm focus:border-gold outline-none">
                 </div>
             </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div><label class="lab">Grade</label><select id="grade-select" class="sel"><option>Initié</option><option>Gardien</option><option>Maître</option><option>Souverain</option></select></div>
+  <div><label class="lab">Référence</label><input id="initiable-ref" class="sel" placeholder="Ex: RÉF. 0001"></div>
+  <div><label class="lab">Couleur de la carte</label><select id="card-color" class="sel"><option value="#d4af37">Or</option><option value="#b91c1c">Rouge sang</option><option value="#9333ea">Violet éthéré</option><option value="#3b82f6">Bleu nuit</option><option value="#10b981">Émeraude</option></select></div>
+</div>
+<div id="passport-card" class="bg-gradient-to-br from-darkBg via-cardBg to-black p-6 rounded-xl relative overflow-hidden shadow-2xl space-y-4" style="--acc:#d4af37;border:2px solid var(--acc)">
+  <div class="absolute top-0 right-0 p-4 opacity-10 font-cinzel font-black text-6xl" style="color:var(--acc)">SLVH</div>
+  <div class="flex justify-between items-start pb-4" style="border-bottom:1px solid var(--acc)">
+    <div><h4 class="font-cinzel font-bold text-lg tracking-widest" style="color:var(--acc)">CARTE D’INITIÉ SLVH</h4><p class="text-xs font-mono text-goldLight/60">SEULEMENT LES VRAIS HUMAINS</p></div>
+    <div id="passport-id" class="font-mono text-xs text-blood bg-blood/10 px-3 py-1 rounded border border-blood/30">SLVH-8824</div>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+    <div class="col-span-1 bg-darkBg h-40 rounded flex items-center justify-center text-center p-1" style="border:1px solid var(--acc)">
+      <img id="passport-img" class="hidden h-full w-full object-contain" alt="Personnage">
+      <span id="passport-ph" class="text-[10px] font-mono" style="color:var(--acc)">VALIDE TON PERSONNAGE</span>
+    </div>
+    <div class="col-span-2 space-y-2 font-mono text-sm">
+      <p><span style="color:var(--acc)">NOM :</span> <span id="display-name" class="text-white">MEMBRE SOUVERAIN</span></p>
+      <p><span style="color:var(--acc)">GRADE :</span> <span id="display-grade" class="text-white">INITIÉ</span></p>
+      <p><span style="color:var(--acc)">SECTEUR :</span> <span id="display-zone" class="text-white">Bruxelles Underground</span></p>
+      <p><span style="color:var(--acc)">RÉF :</span> <span id="display-ref" class="text-white">—</span></p>
+      <p><span style="color:var(--acc)">INCARNATION :</span> <span id="display-gear" class="text-goldLight text-xs">Humain • Épée</span></p>
+      <p><span style="color:var(--acc)">VIBRATION :</span> <span class="text-ethereal">432 Hz • Éveillé</span></p>
+    </div>
+  </div>
+</div>
 
-            <!-- Aperçu de la Carte Passeport -->
-            <div id="passport-card" class="bg-gradient-to-br from-darkBg via-cardBg to-black border-2 border-gold p-6 rounded-xl relative overflow-hidden shadow-2xl space-y-4">
-                <div class="absolute top-0 right-0 p-4 opacity-10 font-cinzel font-black text-6xl text-gold">SLVH</div>
-                <div class="flex justify-between items-start border-b border-gold/20 pb-4">
-                    <div>
-                        <h4 class="font-cinzel font-bold text-gold text-lg tracking-widest">CARTE D'INITIÉ SLVH</h4>
-                        <p class="text-xs font-mono text-goldLight/60">SEULEMENT LES VRAIS HUMAINS</p>
-                    </div>
-                    <div id="passport-id" class="font-mono text-xs text-blood bg-blood/10 px-3 py-1 rounded border border-blood/30">SLVH-8824</div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
-                    <div class="col-span-1 bg-darkBg border border-gold/30 h-32 rounded flex flex-col items-center justify-center text-center p-2">
-                        <span class="text-[10px] font-mono text-gold mb-1">INCARNATION</span>
-                        <span id="passport-avatar-desc" class="text-xs font-mono text-goldLight leading-tight">RÉALISTE<br><span class="text-gold">GARDE SOUVERAINE</span></span>
-                    </div>
-                    <div class="col-span-2 space-y-2 font-mono text-sm">
-                        <p><span class="text-gold">NOM :</span> <span id="display-name" class="text-white">MEMBRE SOUVERAIN</span></p>
-                        <p><span class="text-gold">SECTEUR :</span> <span id="display-zone" class="text-white">Bruxelles Underground</span></p>
-                        <p><span class="text-gold">AURA :</span> <span id="display-gear" class="text-goldLight text-xs">Anneaux de Métatron</span></p>
-                        <p><span class="text-gold">VIBRATION :</span> <span class="text-ethereal">432 Hz • Éveillé</span></p>
-                    </div>
-                </div>
-            </div>
-
-            <button id="download-passport-btn" class="w-full bg-gold text-black font-bold font-mono py-4 rounded hover:bg-goldLight transition tracking-wider">
+            
+<button id="download-passport-btn" class="w-full bg-gold text-black font-bold font-mono py-4 rounded hover:bg-goldLight transition tracking-wider">
                 TÉLÉCHARGER MON PASSEPORT (PNG)
             </button>
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="py-12 border-t border-gold/20 text-center font-mono text-xs text-goldLight/50 space-y-2">
         <p>© 2026 SLVH — SEULEMENT LES VRAIS HUMAINS. TOUS DROITS RÉSERVÉS.</p>
         <p class="text-gold/60">Liberté • Conscience • Thug Life Ésotérique</p>
     </footer>
 
-    <!-- Script 3D Modèle Humain Haute Définition -->
     <script>
-        const container = document.getElementById('canvas-container');
-        const loadingOverlay = document.getElementById('loading-overlay');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.outputEncoding = THREE.sRGBEncoding;
-        renderer.shadowMap.enabled = true;
-        container.appendChild(renderer.domElement);
+        const $=id=>document.getElementById(id);
+const container=$('canvas-container');
+$('loading-overlay').style.display='none';
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(40,container.clientWidth/container.clientHeight,0.1,100);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setSize(container.clientWidth,container.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.outputEncoding=THREE.sRGBEncoding;
+renderer.shadowMap.enabled=true;
+container.appendChild(renderer.domElement);
 
-        // Éclairages Studio Cinématographiques
-        const hemiLight = new THREE.HemisphereLight(0xfff5d6, 0x1a1025, 0.8);
-        hemiLight.position.set(0, 10, 0);
-        scene.add(hemiLight);
+scene.add(new THREE.HemisphereLight(0xfff5d6,0x1a1025,0.9));
+const keyLight=new THREE.DirectionalLight(0xffdf85,1.5);keyLight.position.set(3,5,4);keyLight.castShadow=true;scene.add(keyLight);
+const rimLight=new THREE.PointLight(0x9333ea,2.5,15);rimLight.position.set(-3,2,-3);scene.add(rimLight);
+const fillLight=new THREE.PointLight(0xd4af37,1.2,15);fillLight.position.set(3,1,-2);scene.add(fillLight);
 
-        const keyLight = new THREE.DirectionalLight(0xffdf85, 1.5);
-        keyLight.position.set(3, 5, 4);
-        keyLight.castShadow = true;
-        scene.add(keyLight);
+const baseDisc=new THREE.Mesh(new THREE.CylinderGeometry(1.1,1.2,0.06,48),new THREE.MeshStandardMaterial({color:0x0e0e14,metalness:0.9,roughness:0.2}));
+const goldRing=new THREE.Mesh(new THREE.RingGeometry(1.02,1.08,48),new THREE.MeshBasicMaterial({color:0xd4af37,side:THREE.DoubleSide}));
+goldRing.rotation.x=-Math.PI/2;goldRing.position.y=0.035;
+scene.add(baseDisc,goldRing);
 
-        const rimLight = new THREE.PointLight(0x9333ea, 2.5, 15);
-        rimLight.position.set(-3, 2, -3);
-        scene.add(rimLight);
+const rootGroup=new THREE.Group();scene.add(rootGroup);
+const auraGroup=new THREE.Group();rootGroup.add(auraGroup);
+let charGroup=null,parts={base:{L:0,R:0}},orb=null;
+const state={species:'human',skin:'#e8b98f',hair:'#0d0d0d',weapon:'epee'};
+const SKINS=['#f8d9c4','#e8b98f','#c68a5b','#8d5a3a','#5a3825','#3a2418','#e9e4ee'];
+const HAIRS=['#0d0d0d','#4a2c17','#d9b45a','#a63a1c','#e8e8ec','#6d28d9'];
 
-        const fillLight = new THREE.PointLight(0xd4af37, 1.2, 15);
-        fillLight.position.set(3, 1, -2);
-        scene.add(fillLight);
+const M=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:0.7,metalness:0.1},o));
+function mesh(g,m,x=0,y=0,z=0){const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;return o;}
 
-        // Socle Sacré au sol
-        const pedestalGroup = new THREE.Group();
-        const baseDisc = new THREE.Mesh(
-            new THREE.CylinderGeometry(1.1, 1.2, 0.06, 48),
-            new THREE.MeshStandardMaterial({ color: 0x0e0e14, metalness: 0.9, roughness: 0.2 })
-        );
-        const goldRing = new THREE.Mesh(
-            new THREE.RingGeometry(1.02, 1.08, 48),
-            new THREE.MeshBasicMaterial({ color: 0xd4af37, side: THREE.DoubleSide })
-        );
-        goldRing.rotation.x = -Math.PI / 2;
-        goldRing.position.y = 0.035;
-        pedestalGroup.add(baseDisc, goldRing);
-        scene.add(pedestalGroup);
+function buildChar(){
+  if(charGroup)rootGroup.remove(charGroup);
+  const wolf=state.species==='wolf',vamp=state.species==='vampire';
+  const g=new THREE.Group();charGroup=g;parts={base:{L:0,R:0}};orb=null;
+  const skin=M(state.skin,{roughness:0.55}),hair=M(state.hair,{roughness:0.85});
+  const cloth=M(vamp?0x2a0a12:0x24242e,{roughness:0.8}),pants=M(0x15151b,{roughness:0.9});
+  g.add(mesh(new THREE.CylinderGeometry(wolf?0.32:0.27,0.22,0.72,16),wolf?skin:cloth,0,1.2,0));
+  g.add(mesh(new THREE.CylinderGeometry(0.07,0.08,0.14,10),skin,0,1.62,0));
+  g.add(mesh(new THREE.SphereGeometry(0.2,24,18),skin,0,1.78,0));
+  const eye=M(vamp?0xff2020:wolf?0xffd000:0x111111,{emissive:vamp?0xaa0000:wolf?0x886600:0x000000});
+  [-1,1].forEach(s=>g.add(mesh(new THREE.SphereGeometry(0.028,10,8),eye,s*0.075,1.8,0.175)));
+  if(!wolf){
+    const cap=mesh(new THREE.SphereGeometry(0.215,24,16,0,Math.PI*2,0,Math.PI*0.55),hair,0,1.79,-0.015);cap.rotation.x=-0.3;g.add(cap);
+    g.add(mesh(new THREE.SphereGeometry(0.19,16,12),hair,0,1.76,-0.07));
+  }else{
+    const sn=mesh(new THREE.CylinderGeometry(0.05,0.1,0.24,12),skin,0,1.74,0.26);sn.rotation.x=Math.PI/2;g.add(sn);
+    g.add(mesh(new THREE.SphereGeometry(0.04,10,8),M(0x111111),0,1.75,0.38));
+    [-1,1].forEach(s=>{const e=mesh(new THREE.ConeGeometry(0.07,0.22,8),hair,s*0.13,1.99,-0.02);e.rotation.z=-s*0.25;g.add(e);});
+    const mane=mesh(new THREE.SphereGeometry(0.3,16,12),hair,0,1.55,-0.04);mane.scale.set(1,0.55,0.95);g.add(mane);
+  }
+  if(vamp){
+    [-1,1].forEach(s=>{const f=mesh(new THREE.ConeGeometry(0.012,0.05,6),M(0xffffff),s*0.04,1.69,0.185);f.rotation.x=Math.PI;g.add(f);});
+    g.add(mesh(new THREE.BoxGeometry(0.7,1.15,0.03),M(0x6b0f1a),0,1.1,-0.26));
+  }
+  [-1,1].forEach(s=>{
+    const leg=new THREE.Group();leg.position.set(s*0.12,0.86,0);
+    leg.add(mesh(new THREE.CylinderGeometry(0.09,0.075,0.8,12),pants,0,-0.4,0));
+    leg.add(mesh(new THREE.BoxGeometry(0.13,0.08,0.24),M(0x0a0a0d),0,-0.84,0.05));
+    g.add(leg);parts[s<0?'legL':'legR']=leg;
+    const arm=new THREE.Group();arm.position.set(s*0.37,1.5,0);
+    arm.add(mesh(new THREE.CylinderGeometry(0.065,0.055,0.56,12),wolf?skin:cloth,0,-0.28,0));
+    const hand=new THREE.Group();hand.position.set(0,-0.6,0);
+    hand.add(mesh(new THREE.SphereGeometry(0.065,12,10),skin));
+    if(wolf)[-1,0,1].forEach(k=>{const c=mesh(new THREE.ConeGeometry(0.012,0.07,6),M(0xeeeeee),k*0.03,-0.08,0.02);c.rotation.x=Math.PI;hand.add(c);});
+    arm.add(hand);g.add(arm);parts[s<0?'armL':'armR']=arm;if(s>0)parts.hand=hand;
+  });
+  const w=state.weapon,wg=new THREE.Group();parts.hand.add(wg);
+  const steel=M(0xc9ced6,{metalness:0.9,roughness:0.2}),wood=M(0x5a3a1e),dark=M(0x1a1a1f,{metalness:0.6,roughness:0.4});
+  if(w==='ak'){
+    parts.base.R=-1.3;parts.base.L=-0.7;
+    wg.add(mesh(new THREE.BoxGeometry(0.05,0.5,0.07),dark,0,-0.2,0));
+    wg.add(mesh(new THREE.CylinderGeometry(0.012,0.012,0.3,8),dark,0,-0.6,0));
+    wg.add(mesh(new THREE.BoxGeometry(0.055,0.22,0.08),wood,0,-0.42,0));
+    const mag=mesh(new THREE.BoxGeometry(0.04,0.16,0.07),dark,0,-0.26,-0.09);mag.rotation.x=-0.3;wg.add(mag);
+    wg.add(mesh(new THREE.BoxGeometry(0.045,0.22,0.08),wood,0,0.16,-0.01));
+  }else if(w==='axe'){
+    parts.base.R=-0.4;wg.rotation.x=0.4;
+    wg.add(mesh(new THREE.CylinderGeometry(0.022,0.022,0.95,8),wood,0,0.3,0));
+    wg.add(mesh(new THREE.BoxGeometry(0.04,0.22,0.26),steel,0,0.72,0.12));
+    wg.add(mesh(new THREE.BoxGeometry(0.05,0.1,0.06),steel,0,0.72,-0.05));
+  }else if(w==='epee'){
+    parts.base.R=-0.4;wg.rotation.x=0.4;
+    wg.add(mesh(new THREE.CylinderGeometry(0.02,0.02,0.16,8),dark,0,0.02,0));
+    wg.add(mesh(new THREE.BoxGeometry(0.24,0.03,0.05),M(0xd4af37,{metalness:0.9,roughness:0.2}),0,0.12,0));
+    wg.add(mesh(new THREE.BoxGeometry(0.05,0.8,0.012),steel,0,0.54,0));
+  }else if(w==='power'){
+    parts.base.R=-1.0;
+    const pm=M(0xa855f7,{emissive:0x8b5cf6,emissiveIntensity:1.3});
+    orb=mesh(new THREE.SphereGeometry(0.11,20,16),pm,0,-0.2,0);wg.add(orb);
+    parts.ring=mesh(new THREE.TorusGeometry(0.19,0.008,8,32),pm,0,-0.2,0);wg.add(parts.ring);
+    const pl=new THREE.PointLight(0xa855f7,1.8,3);pl.position.set(0,-0.2,0);wg.add(pl);
+  }
+  if(wolf)g.scale.setScalar(1.1);
+  rootGroup.add(g);
+}
 
-        // Groupe Conteneur du Modèle + Artefacts
-        const rootGroup = new THREE.Group();
-        scene.add(rootGroup);
+let orbitRings=[];
+function updateAura(type){
+  while(auraGroup.children.length)auraGroup.remove(auraGroup.children[0]);
+  orbitRings=[];
+  const gm=new THREE.MeshStandardMaterial({color:0xd4af37,metalness:0.95,roughness:0.15});
+  const pm=new THREE.MeshBasicMaterial({color:0x9333ea,wireframe:true,transparent:true,opacity:0.35});
+  if(type==='metatron'){
+    const r1=new THREE.Mesh(new THREE.TorusGeometry(1.15,0.015,16,80),gm);r1.position.y=1.15;r1.rotation.x=Math.PI/3;
+    const r2=new THREE.Mesh(new THREE.TorusGeometry(1.15,0.015,16,80),gm);r2.position.y=1.15;r2.rotation.y=Math.PI/3;
+    auraGroup.add(r1,r2);orbitRings.push(r1,r2);
+  }else if(type==='torus'){
+    const t=new THREE.Mesh(new THREE.TorusGeometry(0.95,0.38,16,48),pm);t.position.y=1.1;t.rotation.x=Math.PI/2;
+    auraGroup.add(t);orbitRings.push(t);
+  }
+}
 
-        const auraGroup = new THREE.Group();
-        rootGroup.add(auraGroup);
+function swatches(id,arr,key){
+  const el=$(id);
+  arr.forEach(c=>{
+    const b=document.createElement('button');
+    b.className='sw'+(state[key]===c?' on':'');b.style.background=c;b.setAttribute('aria-label',c);
+    b.onclick=()=>{state[key]=c;[...el.children].forEach(x=>x.classList.remove('on'));b.classList.add('on');buildChar();};
+    el.appendChild(b);
+  });
+}
+swatches('skin-swatches',SKINS,'skin');
+swatches('hair-swatches',HAIRS,'hair');
+buildChar();updateAura('metatron');
 
-        let modelMesh = null;
-        let mixer = null;
-        let actions = {};
-        let activeAction = null;
-        const originalMaterials = new Map();
+const animSelect=$('anim-select');
+$('species-select').onchange=e=>{state.species=e.target.value;buildChar();syncPassport();};
+$('weapon-select').onchange=e=>{state.weapon=e.target.value;buildChar();syncPassport();};
+$('aura-select').onchange=e=>updateAura(e.target.value);
+$('light-select').onchange=e=>{
+  const v=e.target.value;
+  if(v==='solaire'){keyLight.color.setHex(0xffdf85);rimLight.color.setHex(0xd4af37);}
+  else if(v==='street'){keyLight.color.setHex(0xef4444);rimLight.color.setHex(0x3b82f6);}
+  else{keyLight.color.setHex(0xe9d5ff);rimLight.color.setHex(0x9333ea);}
+};
 
-        // Chargement du véritable modèle humain 3D articulé (Three.js Official GLB)
-        const loader = new THREE.GLTFLoader();
-        const modelUrl = 'https://threejs.org/examples/models/gltf/Soldier.glb';
+camera.position.set(0,1.3,4.4);camera.lookAt(0,1.0,0);
+let isDragging=false,prevX=0,autoSpin=true;
+const spinBtn=$('toggle-spin-btn');
+spinBtn.onclick=()=>{autoSpin=!autoSpin;spinBtn.textContent=autoSpin?'ROTATION : ON':'ROTATION : OFF';};
+container.addEventListener('mousedown',e=>{isDragging=true;prevX=e.clientX;});
+window.addEventListener('mouseup',()=>{isDragging=false;});
+window.addEventListener('mousemove',e=>{if(!isDragging)return;rootGroup.rotation.y+=(e.clientX-prevX)*0.012;prevX=e.clientX;});
+container.addEventListener('touchstart',e=>{isDragging=true;prevX=e.touches[0].clientX;},{passive:true});
+window.addEventListener('touchend',()=>{isDragging=false;});
+window.addEventListener('touchmove',e=>{if(!isDragging)return;rootGroup.rotation.y+=(e.touches[0].clientX-prevX)*0.015;prevX=e.touches[0].clientX;},{passive:true});
+container.addEventListener('wheel',e=>{e.preventDefault();camera.position.z=Math.max(2.6,Math.min(6,camera.position.z+e.deltaY*0.002));},{passive:false});
 
-        loader.load(modelUrl, (gltf) => {
-            modelMesh = gltf.scene;
-            modelMesh.scale.set(1.25, 1.25, 1.25);
-            modelMesh.rotation.y = Math.PI; // Face à la caméra
+const clock=new THREE.Clock();
+function animate(){
+  requestAnimationFrame(animate);
+  const t=clock.getElapsedTime(),a=animSelect.value;
+  const f=a==='Run'?9:a==='Walk'?5:2,amp=a==='Run'?0.9:a==='Walk'?0.5:0.04,sw=Math.sin(t*f)*amp;
+  if(charGroup&&parts.legL){
+    parts.legL.rotation.x=sw;parts.legR.rotation.x=-sw;
+    parts.armL.rotation.x=parts.base.L-sw*0.8;
+    parts.armR.rotation.x=parts.base.R+(state.weapon==='none'?sw*0.8:sw*0.15);
+    charGroup.position.y=a==='Idle'?Math.sin(t*2)*0.008:Math.abs(Math.sin(t*f))*(a==='Run'?0.1:0.05);
+  }
+  if(orb){orb.scale.setScalar(1+Math.sin(t*5)*0.15);if(parts.ring)parts.ring.rotation.x+=0.05;}
+  if(autoSpin&&!isDragging)rootGroup.rotation.y+=0.006;
+  orbitRings.forEach((r,i)=>{r.rotation.z+=i===0?0.012:-0.012;});
+  renderer.render(scene,camera);
+}
+animate();
+window.addEventListener('resize',()=>{camera.aspect=container.clientWidth/container.clientHeight;camera.updateProjectionMatrix();renderer.setSize(container.clientWidth,container.clientHeight);});
 
-            // Sauvegarde des matériaux réalistes d'origine
-            modelMesh.traverse((child) => {
-                if (child.isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                    originalMaterials.set(child.uuid, child.material.clone());
-                }
-            });
-
-            rootGroup.add(modelMesh);
-
-            // Configuration des animations squelettiques naturelles
-            mixer = new THREE.AnimationMixer(modelMesh);
-            gltf.animations.forEach((clip) => {
-                actions[clip.name] = mixer.clipAction(clip);
-            });
-
-            if (actions['Idle']) {
-                activeAction = actions['Idle'];
-                activeAction.play();
-            }
-
-            loadingOverlay.style.display = 'none';
-        }, undefined, (error) => {
-            console.error('Erreur chargement modèle 3D :', error);
-            loadingOverlay.innerHTML = '<p class="font-mono text-xs text-blood">CONNEXION REQUISE POUR LE MODÈLE HD</p>';
-        });
-
-        // --- Artefacts Ésotériques autour du personnage ---
-        let orbitRings = [];
-        function updateAura(type) {
-            while (auraGroup.children.length > 0) auraGroup.remove(auraGroup.children[0]);
-            orbitRings = [];
-            const goldMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.95, roughness: 0.15 });
-            const purpleMat = new THREE.MeshBasicMaterial({ color: 0x9333ea, wireframe: true, transparent: true, opacity: 0.35 });
-
-            if (type === 'metatron') {
-                const r1 = new THREE.Mesh(new THREE.TorusGeometry(1.15, 0.015, 16, 80), goldMat);
-                r1.position.y = 1.15;
-                r1.rotation.x = Math.PI / 3;
-                const r2 = new THREE.Mesh(new THREE.TorusGeometry(1.15, 0.015, 16, 80), goldMat);
-                r2.position.y = 1.15;
-                r2.rotation.y = Math.PI / 3;
-                auraGroup.add(r1, r2);
-                orbitRings.push(r1, r2);
-            } else if (type === 'torus') {
-                const torus = new THREE.Mesh(new THREE.TorusGeometry(0.95, 0.38, 16, 48), purpleMat);
-                torus.position.y = 1.1;
-                torus.rotation.x = Math.PI / 2;
-                auraGroup.add(torus);
-                orbitRings.push(torus);
-            }
-        }
-        updateAura('metatron');
-
-        // --- Contrôles de Personnalisation ---
-        const animSelect = document.getElementById('anim-select');
-        const skinSelect = document.getElementById('skin-select');
-        const lightSelect = document.getElementById('light-select');
-        const auraSelect = document.getElementById('aura-select');
-
-        animSelect.addEventListener('change', (e) => {
-            const nextName = e.target.value;
-            if (actions[nextName] && actions[nextName] !== activeAction) {
-                const prev = activeAction;
-                activeAction = actions[nextName];
-                if (prev) prev.fadeOut(0.3);
-                activeAction.reset().fadeIn(0.3).play();
-            }
-            syncPassportText();
-        });
-
-        skinSelect.addEventListener('change', (e) => {
-            const mode = e.target.value;
-            if (!modelMesh) return;
-
-            modelMesh.traverse((child) => {
-                if (!child.isMesh) return;
-                if (mode === 'original') {
-                    child.material = originalMaterials.get(child.uuid).clone();
-                } else if (mode === 'obsidienne') {
-                    child.material = new THREE.MeshStandardMaterial({
-                        color: 0x111116, metalness: 0.85, roughness: 0.25
-                    });
-                } else if (mode === 'divin') {
-                    child.material = new THREE.MeshStandardMaterial({
-                        color: 0xd4af37, metalness: 0.95, roughness: 0.18
-                    });
-                } else if (mode === 'astral') {
-                    child.material = new THREE.MeshStandardMaterial({
-                        color: 0x3b0764, emissive: 0x7e22ce, emissiveIntensity: 0.6, metalness: 0.4, roughness: 0.3
-                    });
-                } else if (mode === 'chrome') {
-                    child.material = new THREE.MeshStandardMaterial({
-                        color: 0xe2e8f0, metalness: 0.98, roughness: 0.1
-                    });
-                }
-            });
-            syncPassportText();
-        });
-
-        lightSelect.addEventListener('change', (e) => {
-            const val = e.target.value;
-            if (val === 'solaire') {
-                keyLight.color.setHex(0xffdf85);
-                rimLight.color.setHex(0xd4af37);
-            } else if (val === 'street') {
-                keyLight.color.setHex(0xef4444);
-                rimLight.color.setHex(0x3b82f6);
-            } else if (val === 'esoterique') {
-                keyLight.color.setHex(0xe9d5ff);
-                rimLight.color.setHex(0x9333ea);
-            }
-        });
-
-        auraSelect.addEventListener('change', (e) => {
-            updateAura(e.target.value);
-            syncPassportText();
-        });
-
-        // --- Caméra & Rotation Interactive ---
-        camera.position.set(0, 1.35, 3.6);
-        camera.lookAt(0, 1.05, 0);
-
-        let isDragging = false;
-        let prevX = 0;
-        let autoSpin = true;
-
-        const spinBtn = document.getElementById('toggle-spin-btn');
-        spinBtn.addEventListener('click', () => {
-            autoSpin = !autoSpin;
-            spinBtn.textContent = autoSpin ? "ROTATION : ON" : "ROTATION : OFF";
-        });
-
-        container.addEventListener('mousedown', (e) => { isDragging = true; prevX = e.clientX; });
-        window.addEventListener('mouseup', () => { isDragging = false; });
-        window.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            rootGroup.rotation.y += (e.clientX - prevX) * 0.012;
-            prevX = e.clientX;
-        });
-
-        container.addEventListener('touchstart', (e) => { isDragging = true; prevX = e.touches[0].clientX; });
-        window.addEventListener('touchend', () => { isDragging = false; });
-        window.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            rootGroup.rotation.y += (e.touches[0].clientX - prevX) * 0.015;
-            prevX = e.touches[0].clientX;
-        });
-
-        container.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            camera.position.z = Math.max(2.1, Math.min(5.5, camera.position.z + e.deltaY * 0.002));
-        }, { passive: false });
-
-        const clock = new THREE.Clock();
-        function animate() {
-            requestAnimationFrame(animate);
-            const delta = clock.getDelta();
-            if (mixer) mixer.update(delta);
-            if (autoSpin && !isDragging) {
-                rootGroup.rotation.y += 0.006;
-            }
-            orbitRings.forEach((r, i) => {
-                r.rotation.z += i === 0 ? 0.012 : -0.012;
-            });
-            renderer.render(scene, camera);
-        }
-        animate();
-
-        window.addEventListener('resize', () => {
-            camera.aspect = container.clientWidth / container.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(container.clientWidth, container.clientHeight);
-        });
-
-        // --- Synchronisation Passeport ---
-        function syncPassportText() {
-            const skinTxt = skinSelect.options[skinSelect.selectedIndex].text.split(' (')[0];
-            const animTxt = animSelect.options[animSelect.selectedIndex].text.split(' (')[0];
-            const auraTxt = auraSelect.options[auraSelect.selectedIndex].text;
-            document.getElementById('passport-avatar-desc').innerHTML = `${skinTxt.toUpperCase()}<br><span class="text-gold">${animTxt.toUpperCase()}</span>`;
-            document.getElementById('display-gear').textContent = auraTxt;
-        }
-
-        document.getElementById('save-avatar-btn').addEventListener('click', () => {
-            syncPassportText();
-            document.getElementById('passport').scrollIntoView({ behavior: 'smooth' });
-        });
+const SPN={human:'Humain',wolf:'Loup-garou',vampire:'Vampire'},WN={none:'Sans arme',ak:'Kalachnikov',axe:'Hache',epee:'Épée',power:'Super pouvoir'};
+function syncPassport(){
+  $('display-gear').textContent=SPN[state.species]+' • '+WN[state.weapon];
+  $('display-grade').textContent=$('grade-select').value.toUpperCase();
+  $('display-ref').textContent=$('initiable-ref').value||'—';
+  $('passport-card').style.setProperty('--acc',$('card-color').value);
+}
+['grade-select','card-color'].forEach(id=>$(id).addEventListener('change',syncPassport));
+$('initiable-ref').addEventListener('input',syncPassport);
+$('save-avatar-btn').onclick=()=>{
+  const r=rootGroup.rotation.y;rootGroup.rotation.y=0.3;
+  renderer.render(scene,camera);
+  const url=renderer.domElement.toDataURL('image/png');
+  rootGroup.rotation.y=r;
+  const im=$('passport-img');im.src=url;im.classList.remove('hidden');$('passport-ph').classList.add('hidden');
+  syncPassport();$('passport').scrollIntoView({behavior:'smooth'});
+};
 
         // --- Web Audio API (Beat Trap / 808) ---
-        let audioCtx = null;
+        
+let audioCtx = null;
         const playBtn = document.getElementById('play-beat-btn');
         let isPlaying = false;
         let beatInterval = null;
@@ -609,6 +530,15 @@
                 link.click();
             });
         });
-    </script>
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:0.12});
+document.querySelectorAll('section h3, section .glass-panel, section .grid > div, #avatar-creator .text-center > *').forEach(el=>el.classList.add('reveal'));
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+const prog=document.getElementById('progress'),hr=document.getElementById('hero-rings');
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-innerHeight;
+  prog.style.width=(h>0?scrollY/h*100:0)+'%';
+  if(scrollY<innerHeight)hr.style.transform='translateY('+scrollY*0.25+'px)';
+},{passive:true});
+</script>
 </body>
 </html>
