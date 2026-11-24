@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLVH — Seulement Les Vrais Humains | Studio 3D & Ésotérisme</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#08080a',
+                        cardBg: '#121218',
+                        gold: '#d4af37',
+                        goldLight: '#f3e5ab',
+                        blood: '#b91c1c',
+                        ethereal: '#7e22ce'
+                    },
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                        sans: ['Space Grotesk', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #08080a; color: #f3e5ab; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .gold-glow { text-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+        .blood-glow { text-shadow: 0 0 15px rgba(185, 28, 28, 0.5); }
+        .border-gold-glow { box-shadow: 0 0 20px rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.3); }
+        .glass-panel { background: rgba(18, 18, 24, 0.88); backdrop-filter: blur(12px); border: 1px solid rgba(212, 175, 55, 0.25); }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #08080a; }
+        ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 4px; }
+    </style>
+</head>
+<body class="selection:bg-gold selection:text-black">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-50 glass-panel border-b border-gold/20 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-full border border-gold flex items-center justify-center font-cinzel font-bold text-gold gold-glow">SLVH</div>
+            <div>
+                <h1 class="font-cinzel font-bold tracking-wider text-gold text-lg">SLVH</h1>
+                <p class="text-xs text-goldLight/60 font-mono tracking-widest">SEULEMENT LES VRAIS HUMAINS</p>
+            </div>
+        </div>
+        <div class="hidden md:flex space-x-8 text-sm font-mono tracking-widest">
+            <a href="#avatar-creator" class="hover:text-gold transition">STUDIO 3D</a>
+            <a href="#audio" class="hover:text-gold transition">ARCHIVES SONORES</a>
+            <a href="#codex" class="hover:text-gold transition">CODEX</a>
+            <a href="#passport" class="hover:text-gold transition">PASSEPORT</a>
+        </div>
+        <a href="#passport" class="bg-gold/10 border border-gold text-gold hover:bg-gold hover:text-black transition px-4 py-2 rounded font-mono text-xs tracking-wider">REJOINDRE LE MOUVEMENT</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative min-h-screen flex items-center justify-center px-6 pt-24 pb-16 overflow-hidden">
+        <div class="absolute inset-0 z-0 opacity-20 flex items-center justify-center pointer-events-none">
+            <div class="w-[600px] h-[600px] border border-gold rounded-full animate-pulse flex items-center justify-center">
+                <div class="w-[450px] h-[450px] border border-ethereal rounded-full rotate-45"></div>
+            </div>
+        </div>
+        <div class="relative z-10 max-w-4xl text-center space-y-6">
+            <div class="inline-block px-4 py-1 rounded-full border border-blood text-blood font-mono text-xs uppercase tracking-widest blood-glow">Mouvement de Rébellion Spirituelle & Urbaine</div>
+            <h2 class="font-cinzel text-5xl md:text-7xl font-black text-white tracking-widest gold-glow">
+                SEULEMENT LES <span class="text-gold">VRAIS HUMAINS</span>
+            </h2>
+            <p class="text-lg md:text-xl text-goldLight/80 max-w-2xl mx-auto font-sans leading-relaxed">
+                Rap brut, conscience ésotérique, décryptage de l'histoire humaine, des énergies et de la Matrice. Bienvenue dans l'Ordre SLVH.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4 pt-4">
+                <a href="#avatar-creator" class="bg-gold text-black font-bold font-mono px-8 py-4 rounded hover:bg-goldLight transition shadow-lg tracking-wider">PERSONNALISER MON AVATAR</a>
+                <a href="#audio" class="glass-panel text-gold font-mono px-8 py-4 rounded hover:bg-gold/10 transition tracking-wider">ÉCOUTER LES ARCHIVES</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Atelier de Création de Personnage 3D Réaliste -->
+    <section id="avatar-creator" class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="text-center mb-12 space-y-3">
+            <div class="inline-block px-3 py-1 border border-gold/40 rounded font-mono text-xs text-gold">MODÈLE HUMANOÏDE HAUTE DÉFINITION</div>
+            <h3 class="font-cinzel text-3xl md:text-4xl font-bold text-gold gold-glow">STUDIO DE CRÉATION D'AVATAR 3D</h3>
+            <p class="text-goldLight/70 font-mono text-sm">Configure l'apparence, l'aura énergétique et la posture de ton initié SLVH</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <!-- Canvas 3D -->
+            <div class="lg:col-span-7 glass-panel rounded-2xl h-[540px] md:h-[640px] relative overflow-hidden flex items-center justify-center border-gold-glow">
+                <div id="loading-overlay" class="absolute inset-0 bg-darkBg/90 z-20 flex flex-col items-center justify-center space-y-3">
+                    <div class="w-10 h-10 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
+                    <p class="font-mono text-xs text-gold tracking-widest">INCARNATION DU MODÈLE 3D EN COURS...</p>
+                </div>
+                <div id="canvas-container" class="w-full h-full cursor-grab active:grabbing"></div>
+                <div class="absolute top-4 left-4 flex gap-2 z-10">
+                    <button id="toggle-spin-btn" class="bg-black/80 hover:bg-gold hover:text-black transition px-3 py-1.5 rounded border border-gold/40 text-xs font-mono text-gold">ROTATION : ON</button>
+                </div>
+                <div class="absolute bottom-4 left-4 right-4 text-center pointer-events-none z-10">
+                    <span class="bg-black/85 px-4 py-1.5 rounded border border-gold/30 text-xs font-mono text-gold">Glisse pour pivoter à 360° • Molette pour zoomer</span>
+                </div>
+            </div>
+
+            <!-- Menu RPG de Personnalisation -->
+            <div class="lg:col-span-5 glass-panel p-6 md:p-8 rounded-2xl space-y-5">
+                <div>
+                    <label class="block font-mono text-xs text-gold mb-1.5 uppercase tracking-wider">1. Posture & Attitude</label>
+                    <select id="anim-select" class="w-full bg-darkBg border border-gold/30 rounded p-3 text-goldLight font-mono text-sm focus:border-gold outline-none">
+                        <option value="Idle">Garde Souveraine (Posture Calme)</option>
+                        <option value="Walk">Marche Déterminée (Street)</option>
+                        <option value="Run">Course / Assaut</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-mono text-xs text-gold mb-1.5 uppercase tracking-wider">2. Finition du Skin / Matériau</label>
+                    <select id="skin-select" class="w-full bg-darkBg border border-gold/30 rounded p-3 text-goldLight font-mono text-sm focus:border-gold outline-none">
+                        <option value="original">Réaliste (Texture Originale)</option>
+                        <option value="obsidienne">Armure Obsidienne & Or</option>
+                        <option value="divin">Statuaire Or Alchimique</option>
+                        <option value="astral">Corps Astral (Énergie Violette)</option>
+                        <option value="chrome">Chrome Cybernétique</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-mono text-xs text-gold mb-1.5 uppercase tracking-wider">3. Éclairage & Ambiance</label>
+                    <select id="light-select" class="w-full bg-darkBg border border-gold/30 rounded p-3 text-goldLight font-mono text-sm focus:border-gold outline-none">
+                        <option value="solaire">Aube Dorée (Solaire & Chaud)</option>
+                        <option value="street">Nuit Urbaine (Néon Rouge & Bleu)</option>
+                        <option value="esoterique">Temple Éthéré (Violet & Or)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-mono text-xs text-gold mb-1.5 uppercase tracking-wider">4. Artefacts & Champ Énergétique</label>
+                    <select id="aura-select" class="w-full bg-darkBg border border-gold/30 rounded p-3 text-goldLight font-mono text-sm focus:border-gold outline-none">
+                        <option value="metatron">Anneaux de Métatron en Orbite</option>
+                        <option value="torus">Champ Toroïdal 432Hz</option>
+                        <option value="aucun">Épuré (Sans Artefacts)</option>
+                    </select>
+                </div>
+
+                <div class="pt-2">
+                    <button id="save-avatar-btn" class="w-full bg-gold text-black font-bold font-mono py-3.5 rounded hover:bg-goldLight transition tracking-wider shadow-lg">
+                        VALIDER POUR MON PASSEPORT SLVH
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Archives Sonores SLVH -->
+    <section id="audio" class="py-24 px-6 max-w-5xl mx-auto">
+        <div class="text-center mb-16 space-y-3">
+            <h3 class="font-cinzel text-3xl md:text-4xl font-bold text-gold gold-glow">ARCHIVES SONORES SLVH</h3>
+            <p class="text-goldLight/70 font-mono text-sm">Fréquences 432Hz, 808 sombres et vérités cachées</p>
+        </div>
+
+        <div class="glass-panel p-6 md:p-8 rounded-2xl space-y-6 border-gold-glow">
+            <div class="flex flex-col md:flex-row justify-between items-center border-b border-gold/20 pb-6 gap-4">
+                <div>
+                    <span id="current-track-title" class="font-cinzel text-xl text-white font-bold">SLVH — Seulement Les Vrais Humains (Intro)</span>
+                    <p id="current-track-desc" class="text-xs font-mono text-goldLight/60 mt-1">Fréquence de base : 432Hz • Thème : Éveil des consciences & bris de la Matrice</p>
+                </div>
+                <button id="play-beat-btn" class="bg-gold text-black font-bold font-mono px-6 py-3 rounded hover:bg-goldLight transition tracking-wider">
+                    LANCER LE BEAT 808
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                <div class="track-item p-4 rounded bg-darkBg border border-gold/10 hover:border-gold/40 transition cursor-pointer flex justify-between items-center" data-title="SLVH — Seulement Les Vrais Humains (Intro)" data-desc="Fréquence 432Hz • L'appel des réels au milieu des illusions.">
+                    <div>
+                        <h4 class="font-cinzel font-bold text-gold">01. Seulement Les Vrais Humains</h4>
+                        <p class="text-xs font-mono text-goldLight/60">Prod sombre / 808 lourdes / Voix modulées</p>
+                    </div>
+                    <span class="text-xs font-mono text-gold">LECTURE</span>
+                </div>
+                <div class="track-item p-4 rounded bg-darkBg border border-gold/10 hover:border-gold/40 transition cursor-pointer flex justify-between items-center" data-title="Chute de Babylone" data-desc="Histoire humaine oubliée et effondrement des systèmes de contrôle.">
+                    <div>
+                        <h4 class="font-cinzel font-bold text-gold">02. Chute de Babylone</h4>
+                        <p class="text-xs font-mono text-goldLight/60">Trap ésotérique / Cuivres menaçants</p>
+                    </div>
+                    <span class="text-xs font-mono text-gold">LECTURE</span>
+                </div>
+                <div class="track-item p-4 rounded bg-darkBg border border-gold/10 hover:border-gold/40 transition cursor-pointer flex justify-between items-center" data-title="Sceau de Salomon & Béton" data-desc="Géométrie sacrée appliquée au pavé, alchimie de la rue.">
+                    <div>
+                        <h4 class="font-cinzel font-bold text-gold">03. Sceau de Salomon & Béton</h4>
+                        <p class="text-xs font-mono text-goldLight/60">Mélodies hypnotiques / Basse profonde</p>
+                    </div>
+                    <span class="text-xs font-mono text-gold">LECTURE</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Codex & Piliers -->
+    <section id="codex" class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="text-center mb-16 space-y-3">
+            <h3 class="font-cinzel text-3xl md:text-4xl font-bold text-gold gold-glow">LE CODEX DE SLVH</h3>
+            <p class="text-goldLight/70 font-mono text-sm">Les 4 Piliers de notre mouvement de liberté</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="glass-panel p-6 rounded-xl space-y-4 border-gold-glow">
+                <div class="text-gold font-cinzel text-xl font-bold">01 / Histoire Cachée</div>
+                <p class="text-sm text-goldLight/80 font-sans">Déconstruction des récits officiels, origines des civilisations, et transmission des savoirs muselés à travers les âges.</p>
+            </div>
+            <div class="glass-panel p-6 rounded-xl space-y-4 border-gold-glow">
+                <div class="text-gold font-cinzel text-xl font-bold">02 / Dieu & Le Divin</div>
+                <p class="text-sm text-goldLight/80 font-sans">Au-delà des dogmes religieux, reconnexion directe avec la source universelle, l'étincelle divine en chaque être humain.</p>
+            </div>
+            <div class="glass-panel p-6 rounded-xl space-y-4 border-gold-glow">
+                <div class="text-gold font-cinzel text-xl font-bold">03 / Énergies & Fréquences</div>
+                <p class="text-sm text-goldLight/80 font-sans">Maîtrise des vibrations (432Hz), des champs toroïdaux et de l'alchimie intérieure pour s'affranchir de la Matrice.</p>
+            </div>
+            <div class="glass-panel p-6 rounded-xl space-y-4 border-gold-glow">
+                <div class="text-gold font-cinzel text-xl font-bold">04 / Thug Life & Occulte</div>
+                <p class="text-sm text-goldLight/80 font-sans">Le code d'honneur de la rue croisé avec la rigueur des sciences occultes. Incorruptibles, fidèles et souverains.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Générateur de Passeport -->
+    <section id="passport" class="py-24 px-6 max-w-4xl mx-auto">
+        <div class="text-center mb-16 space-y-3">
+            <h3 class="font-cinzel text-3xl md:text-4xl font-bold text-gold gold-glow">PASSEPORT D'INITIÉ SLVH</h3>
+            <p class="text-goldLight/70 font-mono text-sm">Générez votre carte d'appartenance officielle au mouvement</p>
+        </div>
+
+        <div class="glass-panel p-8 md:p-12 rounded-2xl space-y-8 border-gold-glow">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block font-mono text-xs text-gold mb-2 uppercase tracking-wider">Votre Pseudo / Nom d'Initié</label>
+                    <input type="text" id="initiable-name" placeholder="Ex: LOUIS SLVH" class="w-full bg-darkBg border border-gold/30 rounded p-3 text-goldLight font-mono text-sm focus:border-gold outline-none">
+                </div>
+                <div>
+                    <label class="block font-mono text-xs text-gold mb-2 uppercase tracking-wider">Zone / Territoire</label>
+                    <input type="text" id="initiable-zone" placeholder="Ex: BRUXELLES / UNDERGROUND" class="w-full bg-darkBg border border-gold/30 rounded p-3 text-goldLight font-mono text-sm focus:border-gold outline-none">
+                </div>
+            </div>
+
+            <!-- Aperçu de la Carte Passeport -->
+            <div id="passport-card" class="bg-gradient-to-br from-darkBg via-cardBg to-black border-2 border-gold p-6 rounded-xl relative overflow-hidden shadow-2xl space-y-4">
+                <div class="absolute top-0 right-0 p-4 opacity-10 font-cinzel font-black text-6xl text-gold">SLVH</div>
+                <div class="flex justify-between items-start border-b border-gold/20 pb-4">
+                    <div>
+                        <h4 class="font-cinzel font-bold text-gold text-lg tracking-widest">CARTE D'INITIÉ SLVH</h4>
+                        <p class="text-xs font-mono text-goldLight/60">SEULEMENT LES VRAIS HUMAINS</p>
+                    </div>
+                    <div id="passport-id" class="font-mono text-xs text-blood bg-blood/10 px-3 py-1 rounded border border-blood/30">SLVH-8824</div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+                    <div class="col-span-1 bg-darkBg border border-gold/30 h-32 rounded flex flex-col items-center justify-center text-center p-2">
+                        <span class="text-[10px] font-mono text-gold mb-1">INCARNATION</span>
+                        <span id="passport-avatar-desc" class="text-xs font-mono text-goldLight leading-tight">RÉALISTE<br><span class="text-gold">GARDE SOUVERAINE</span></span>
+                    </div>
+                    <div class="col-span-2 space-y-2 font-mono text-sm">
+                        <p><span class="text-gold">NOM :</span> <span id="display-name" class="text-white">MEMBRE SOUVERAIN</span></p>
+                        <p><span class="text-gold">SECTEUR :</span> <span id="display-zone" class="text-white">Bruxelles Underground</span></p>
+                        <p><span class="text-gold">AURA :</span> <span id="display-gear" class="text-goldLight text-xs">Anneaux de Métatron</span></p>
+                        <p><span class="text-gold">VIBRATION :</span> <span class="text-ethereal">432 Hz • Éveillé</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <button id="download-passport-btn" class="w-full bg-gold text-black font-bold font-mono py-4 rounded hover:bg-goldLight transition tracking-wider">
+                TÉLÉCHARGER MON PASSEPORT (PNG)
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-gold/20 text-center font-mono text-xs text-goldLight/50 space-y-2">
+        <p>© 2026 SLVH — SEULEMENT LES VRAIS HUMAINS. TOUS DROITS RÉSERVÉS.</p>
+        <p class="text-gold/60">Liberté • Conscience • Thug Life Ésotérique</p>
+    </footer>
+
+    <!-- Script 3D Modèle Humain Haute Définition -->
+    <script>
+        const container = document.getElementById('canvas-container');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.shadowMap.enabled = true;
+        container.appendChild(renderer.domElement);
+
+        // Éclairages Studio Cinématographiques
+        const hemiLight = new THREE.HemisphereLight(0xfff5d6, 0x1a1025, 0.8);
+        hemiLight.position.set(0, 10, 0);
+        scene.add(hemiLight);
+
+        const keyLight = new THREE.DirectionalLight(0xffdf85, 1.5);
+        keyLight.position.set(3, 5, 4);
+        keyLight.castShadow = true;
+        scene.add(keyLight);
+
+        const rimLight = new THREE.PointLight(0x9333ea, 2.5, 15);
+        rimLight.position.set(-3, 2, -3);
+        scene.add(rimLight);
+
+        const fillLight = new THREE.PointLight(0xd4af37, 1.2, 15);
+        fillLight.position.set(3, 1, -2);
+        scene.add(fillLight);
+
+        // Socle Sacré au sol
+        const pedestalGroup = new THREE.Group();
+        const baseDisc = new THREE.Mesh(
+            new THREE.CylinderGeometry(1.1, 1.2, 0.06, 48),
+            new THREE.MeshStandardMaterial({ color: 0x0e0e14, metalness: 0.9, roughness: 0.2 })
+        );
+        const goldRing = new THREE.Mesh(
+            new THREE.RingGeometry(1.02, 1.08, 48),
+            new THREE.MeshBasicMaterial({ color: 0xd4af37, side: THREE.DoubleSide })
+        );
+        goldRing.rotation.x = -Math.PI / 2;
+        goldRing.position.y = 0.035;
+        pedestalGroup.add(baseDisc, goldRing);
+        scene.add(pedestalGroup);
+
+        // Groupe Conteneur du Modèle + Artefacts
+        const rootGroup = new THREE.Group();
+        scene.add(rootGroup);
+
+        const auraGroup = new THREE.Group();
+        rootGroup.add(auraGroup);
+
+        let modelMesh = null;
+        let mixer = null;
+        let actions = {};
+        let activeAction = null;
+        const originalMaterials = new Map();
+
+        // Chargement du véritable modèle humain 3D articulé (Three.js Official GLB)
+        const loader = new THREE.GLTFLoader();
+        const modelUrl = 'https://threejs.org/examples/models/gltf/Soldier.glb';
+
+        loader.load(modelUrl, (gltf) => {
+            modelMesh = gltf.scene;
+            modelMesh.scale.set(1.25, 1.25, 1.25);
+            modelMesh.rotation.y = Math.PI; // Face à la caméra
+
+            // Sauvegarde des matériaux réalistes d'origine
+            modelMesh.traverse((child) => {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                    originalMaterials.set(child.uuid, child.material.clone());
+                }
+            });
+
+            rootGroup.add(modelMesh);
+
+            // Configuration des animations squelettiques naturelles
+            mixer = new THREE.AnimationMixer(modelMesh);
+            gltf.animations.forEach((clip) => {
+                actions[clip.name] = mixer.clipAction(clip);
+            });
+
+            if (actions['Idle']) {
+                activeAction = actions['Idle'];
+                activeAction.play();
+            }
+
+            loadingOverlay.style.display = 'none';
+        }, undefined, (error) => {
+            console.error('Erreur chargement modèle 3D :', error);
+            loadingOverlay.innerHTML = '<p class="font-mono text-xs text-blood">CONNEXION REQUISE POUR LE MODÈLE HD</p>';
+        });
+
+        // --- Artefacts Ésotériques autour du personnage ---
+        let orbitRings = [];
+        function updateAura(type) {
+            while (auraGroup.children.length > 0) auraGroup.remove(auraGroup.children[0]);
+            orbitRings = [];
+            const goldMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.95, roughness: 0.15 });
+            const purpleMat = new THREE.MeshBasicMaterial({ color: 0x9333ea, wireframe: true, transparent: true, opacity: 0.35 });
+
+            if (type === 'metatron') {
+                const r1 = new THREE.Mesh(new THREE.TorusGeometry(1.15, 0.015, 16, 80), goldMat);
+                r1.position.y = 1.15;
+                r1.rotation.x = Math.PI / 3;
+                const r2 = new THREE.Mesh(new THREE.TorusGeometry(1.15, 0.015, 16, 80), goldMat);
+                r2.position.y = 1.15;
+                r2.rotation.y = Math.PI / 3;
+                auraGroup.add(r1, r2);
+                orbitRings.push(r1, r2);
+            } else if (type === 'torus') {
+                const torus = new THREE.Mesh(new THREE.TorusGeometry(0.95, 0.38, 16, 48), purpleMat);
+                torus.position.y = 1.1;
+                torus.rotation.x = Math.PI / 2;
+                auraGroup.add(torus);
+                orbitRings.push(torus);
+            }
+        }
+        updateAura('metatron');
+
+        // --- Contrôles de Personnalisation ---
+        const animSelect = document.getElementById('anim-select');
+        const skinSelect = document.getElementById('skin-select');
+        const lightSelect = document.getElementById('light-select');
+        const auraSelect = document.getElementById('aura-select');
+
+        animSelect.addEventListener('change', (e) => {
+            const nextName = e.target.value;
+            if (actions[nextName] && actions[nextName] !== activeAction) {
+                const prev = activeAction;
+                activeAction = actions[nextName];
+                if (prev) prev.fadeOut(0.3);
+                activeAction.reset().fadeIn(0.3).play();
+            }
+            syncPassportText();
+        });
+
+        skinSelect.addEventListener('change', (e) => {
+            const mode = e.target.value;
+            if (!modelMesh) return;
+
+            modelMesh.traverse((child) => {
+                if (!child.isMesh) return;
+                if (mode === 'original') {
+                    child.material = originalMaterials.get(child.uuid).clone();
+                } else if (mode === 'obsidienne') {
+                    child.material = new THREE.MeshStandardMaterial({
+                        color: 0x111116, metalness: 0.85, roughness: 0.25
+                    });
+                } else if (mode === 'divin') {
+                    child.material = new THREE.MeshStandardMaterial({
+                        color: 0xd4af37, metalness: 0.95, roughness: 0.18
+                    });
+                } else if (mode === 'astral') {
+                    child.material = new THREE.MeshStandardMaterial({
+                        color: 0x3b0764, emissive: 0x7e22ce, emissiveIntensity: 0.6, metalness: 0.4, roughness: 0.3
+                    });
+                } else if (mode === 'chrome') {
+                    child.material = new THREE.MeshStandardMaterial({
+                        color: 0xe2e8f0, metalness: 0.98, roughness: 0.1
+                    });
+                }
+            });
+            syncPassportText();
+        });
+
+        lightSelect.addEventListener('change', (e) => {
+            const val = e.target.value;
+            if (val === 'solaire') {
+                keyLight.color.setHex(0xffdf85);
+                rimLight.color.setHex(0xd4af37);
+            } else if (val === 'street') {
+                keyLight.color.setHex(0xef4444);
+                rimLight.color.setHex(0x3b82f6);
+            } else if (val === 'esoterique') {
+                keyLight.color.setHex(0xe9d5ff);
+                rimLight.color.setHex(0x9333ea);
+            }
+        });
+
+        auraSelect.addEventListener('change', (e) => {
+            updateAura(e.target.value);
+            syncPassportText();
+        });
+
+        // --- Caméra & Rotation Interactive ---
+        camera.position.set(0, 1.35, 3.6);
+        camera.lookAt(0, 1.05, 0);
+
+        let isDragging = false;
+        let prevX = 0;
+        let autoSpin = true;
+
+        const spinBtn = document.getElementById('toggle-spin-btn');
+        spinBtn.addEventListener('click', () => {
+            autoSpin = !autoSpin;
+            spinBtn.textContent = autoSpin ? "ROTATION : ON" : "ROTATION : OFF";
+        });
+
+        container.addEventListener('mousedown', (e) => { isDragging = true; prevX = e.clientX; });
+        window.addEventListener('mouseup', () => { isDragging = false; });
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            rootGroup.rotation.y += (e.clientX - prevX) * 0.012;
+            prevX = e.clientX;
+        });
+
+        container.addEventListener('touchstart', (e) => { isDragging = true; prevX = e.touches[0].clientX; });
+        window.addEventListener('touchend', () => { isDragging = false; });
+        window.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            rootGroup.rotation.y += (e.touches[0].clientX - prevX) * 0.015;
+            prevX = e.touches[0].clientX;
+        });
+
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            camera.position.z = Math.max(2.1, Math.min(5.5, camera.position.z + e.deltaY * 0.002));
+        }, { passive: false });
+
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const delta = clock.getDelta();
+            if (mixer) mixer.update(delta);
+            if (autoSpin && !isDragging) {
+                rootGroup.rotation.y += 0.006;
+            }
+            orbitRings.forEach((r, i) => {
+                r.rotation.z += i === 0 ? 0.012 : -0.012;
+            });
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+
+        // --- Synchronisation Passeport ---
+        function syncPassportText() {
+            const skinTxt = skinSelect.options[skinSelect.selectedIndex].text.split(' (')[0];
+            const animTxt = animSelect.options[animSelect.selectedIndex].text.split(' (')[0];
+            const auraTxt = auraSelect.options[auraSelect.selectedIndex].text;
+            document.getElementById('passport-avatar-desc').innerHTML = `${skinTxt.toUpperCase()}<br><span class="text-gold">${animTxt.toUpperCase()}</span>`;
+            document.getElementById('display-gear').textContent = auraTxt;
+        }
+
+        document.getElementById('save-avatar-btn').addEventListener('click', () => {
+            syncPassportText();
+            document.getElementById('passport').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // --- Web Audio API (Beat Trap / 808) ---
+        let audioCtx = null;
+        const playBtn = document.getElementById('play-beat-btn');
+        let isPlaying = false;
+        let beatInterval = null;
+
+        playBtn.addEventListener('click', () => {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            if (!isPlaying) {
+                isPlaying = true;
+                playBtn.textContent = "ARRÊTER LE BEAT";
+                playBtn.classList.add('bg-blood', 'text-white');
+                let step = 0;
+                beatInterval = setInterval(() => {
+                    if (!isPlaying) return;
+                    if (step % 4 === 0) playBass808();
+                    step = (step + 1) % 16;
+                }, 250);
+            } else {
+                isPlaying = false;
+                playBtn.textContent = "LANCER LE BEAT 808";
+                playBtn.classList.remove('bg-blood', 'text-white');
+                if (beatInterval) clearInterval(beatInterval);
+            }
+        });
+
+        function playBass808() {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(130, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(32, audioCtx.currentTime + 0.35);
+            gain.gain.setValueAtTime(0.85, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.35);
+        }
+
+        document.querySelectorAll('.track-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.getElementById('current-track-title').textContent = item.getAttribute('data-title');
+                document.getElementById('current-track-desc').textContent = item.getAttribute('data-desc');
+                if (!isPlaying) playBtn.click();
+            });
+        });
+
+        document.getElementById('initiable-name').addEventListener('input', (e) => {
+            document.getElementById('display-name').textContent = e.target.value || "MEMBRE SOUVERAIN";
+        });
+        document.getElementById('initiable-zone').addEventListener('input', (e) => {
+            document.getElementById('display-zone').textContent = e.target.value || "Bruxelles Underground";
+        });
+        document.getElementById('passport-id').textContent = "SLVH-" + Math.floor(1000 + Math.random() * 9000);
+
+        document.getElementById('download-passport-btn').addEventListener('click', () => {
+            const card = document.getElementById('passport-card');
+            html2canvas(card, { backgroundColor: '#08080a' }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Passeport-SLVH.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        });
+    </script>
+</body>
+</html>
