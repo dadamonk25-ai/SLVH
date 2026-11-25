@@ -299,7 +299,7 @@ scene.add(baseDisc,goldRing);
 
 const rootGroup=new THREE.Group();scene.add(rootGroup);
 const auraGroup=new THREE.Group();rootGroup.add(auraGroup);
-let charGroup=null,parts={base:{L:0,R:0}},orb=null;
+let glbRoot=null,charGroup=null,parts={base:{L:0,R:0}},orb=null;
 const state={species:'human',skin:'#e8b98f',hair:'#0d0d0d',weapon:'epee'};
 const SKINS=['#f8d9c4','#e8b98f','#c68a5b','#8d5a3a','#5a3825','#3a2418','#e9e4ee'];
 const HAIRS=['#0d0d0d','#4a2c17','#d9b45a','#a63a1c','#e8e8ec','#6d28d9'];
@@ -370,6 +370,7 @@ function buildChar(){
     const pl=new THREE.PointLight(0xa855f7,1.8,3);pl.position.set(0,-0.2,0);wg.add(pl);
   }
   if(wolf)g.scale.setScalar(1.1);
+  if(glbRoot)g.visible=false;
   rootGroup.add(g);
 }
 
@@ -394,13 +395,66 @@ function swatches(id,arr,key){
   arr.forEach(c=>{
     const b=document.createElement('button');
     b.className='sw'+(state[key]===c?' on':'');b.style.background=c;b.setAttribute('aria-label',c);
-    b.onclick=()=>{state[key]=c;[...el.children].forEach(x=>x.classList.remove('on'));b.classList.add('on');buildChar();};
+    b.onclick=()=>{state[key]=c;[...el.children].forEach(x=>x.classList.remove('on'));b.classList.add('on');buildChar();if(typeof applyTint==='function')applyTint();};
     el.appendChild(b);
   });
 }
 swatches('skin-swatches',SKINS,'skin');
 swatches('hair-swatches',HAIRS,'hair');
 buildChar();updateAura('metatron');
+
+// --- Modèle 3D réaliste (sci-fi-soldier.glb) ---
+const clk2=new THREE.Clock();
+let glbMixer=null,glbActions={},glbCur=null,glbMats=[];
+function applyTint(){
+  glbMats.forEach(o=>{ if(o.skin)o.m.color.set(state.skin); });
+}
+function playAnim(kind){
+  if(!glbMixer)return;
+  const names=Object.keys(glbActions);if(!names.length)return;
+  const re={Idle:/idle|stand|breath/i,Walk:/walk/i,Run:/run|sprint/i}[kind];
+  const n=names.find(x=>re.test(x))||names[0];
+  const next=glbActions[n];
+  if(next===glbCur)return;
+  if(glbCur)glbCur.fadeOut(0.3);
+  next.reset().fadeIn(0.3).play();glbCur=next;
+}
+new THREE.GLTFLoader().load('sci-fi-soldier.glb',gltf=>{
+  glbRoot=gltf.scene;
+  const lines=['MATÉRIAUX :'],seen=new Set(),bones=[];
+  glbRoot.traverse(c=>{
+    if(c.isBone)bones.push(c.name);
+    if(c.isMesh){
+      c.castShadow=true;c.receiveShadow=true;
+      [].concat(c.material).forEach(m=>{
+        if(seen.has(m.uuid))return;seen.add(m.uuid);
+        lines.push(' - '+(m.name||'(sans nom)'));
+        glbMats.push({m,skin:/skin|face|head|flesh|human|hand|body/i.test(m.name||'')});
+      });
+    }
+  });
+  let box=new THREE.Box3().setFromObject(glbRoot);
+  const h=box.getSize(new THREE.Vector3()).y||1;
+  glbRoot.scale.setScalar(1.9/h);
+  box=new THREE.Box3().setFromObject(glbRoot);
+  glbRoot.position.set(-(box.min.x+box.max.x)/2,-box.min.y,-(box.min.z+box.max.z)/2);
+  const holder=new THREE.Group();holder.add(glbRoot);rootGroup.add(holder);
+  if(charGroup)charGroup.visible=false;
+  glbMixer=new THREE.AnimationMixer(glbRoot);
+  lines.push('ANIMATIONS :');
+  gltf.animations.forEach(c=>{glbActions[c.name]=glbMixer.clipAction(c);lines.push(' - '+c.name);});
+  lines.push('OS (20 premiers) :');bones.slice(0,20).forEach(b=>lines.push(' - '+b));
+  playAnim(animSelect.value);applyTint();
+  ['species-select','weapon-select'].forEach(id=>$(id).parentElement.style.display='none');
+  $('hair-swatches').parentElement.style.display='none';
+  const wrap=$('save-avatar-btn').parentNode;
+  const b=document.createElement('button');b.className='sel mt-2';b.textContent='INFOS DU MODÈLE';
+  const pre=document.createElement('pre');pre.className='hidden text-xs text-goldLight/80 whitespace-pre-wrap mt-2';pre.textContent=lines.join('\n');
+  b.onclick=()=>pre.classList.toggle('hidden');
+  wrap.appendChild(b);wrap.appendChild(pre);
+},undefined,e=>console.warn('GLB non chargé, personnage de secours',e));
+animSelect.addEventListener('change',()=>playAnim(animSelect.value));
+
 
 const animSelect=$('anim-select');
 $('species-select').onchange=e=>{state.species=e.target.value;buildChar();syncPassport();};
@@ -437,6 +491,7 @@ function animate(){
     charGroup.position.y=a==='Idle'?Math.sin(t*2)*0.008:Math.abs(Math.sin(t*f))*(a==='Run'?0.1:0.05);
   }
   if(orb){orb.scale.setScalar(1+Math.sin(t*5)*0.15);if(parts.ring)parts.ring.rotation.x+=0.05;}
+  if(glbMixer)glbMixer.update(clk2.getDelta());
   if(autoSpin&&!isDragging)rootGroup.rotation.y+=0.006;
   orbitRings.forEach((r,i)=>{r.rotation.z+=i===0?0.012:-0.012;});
   renderer.render(scene,camera);
